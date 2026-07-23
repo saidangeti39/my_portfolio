@@ -15,8 +15,6 @@ export default function Portfolio() {
   const canvasRef = useRef(null);
   const rootRef = useRef(null);
 
-  const isOpen = !scrolled || hovered;
-
   // ---- scroll: collapse island after the about section is reached ----
   useEffect(() => {
     const onScroll = () => {
@@ -61,7 +59,14 @@ export default function Portfolio() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isMobile = window.matchMedia("(max-width: 768px)").matches || window.matchMedia("(pointer: coarse)").matches;
+
+    if (reduceMotion || isMobile) {
+      canvas.style.display = "none";
+      return;
+    }
 
     const ctx = canvas.getContext("2d");
     let w, h, points, raf;
@@ -201,8 +206,15 @@ export default function Portfolio() {
           .wrap{ padding:0 24px; }
         }
         section{ position:relative; padding:32px 0; z-index:1; }
-        @media (max-width:768px){ section{ padding:24px 0; } }
-
+        @media (max-width:768px){ section{ padding:24px 0; } }        @media (max-width:768px){
+          .island{ backdrop-filter:none; -webkit-backdrop-filter:none; box-shadow:0 6px 20px rgba(0,0,0,0.25); }
+          .hero{ padding-top:84px; }
+          .btn{ padding:12px 20px; }
+        }
+        @media (hover: hover) and (pointer: fine) {
+          .skill-card:hover{ border-color: var(--purple-soft); transform: translateY(-4px); background: var(--surface-2); }
+          .project-card:hover{ transform: translateY(-6px); border-color: var(--purple-soft); }
+        }
         .eyebrow{
           display:inline-flex; align-items:center; gap:8px;
           font-family: var(--font-mono); font-size:13px; color: var(--cyan);
